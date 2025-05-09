@@ -1,0 +1,12 @@
+[
+  {
+    "ContainingType": "Day_3WebApplication.Controller.EmployeeController",
+    "Method": "GetCompanies",
+    "RelativePath": "api/employees",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  }
+]
