@@ -1,0 +1,61 @@
+﻿@model IEnumerable<Employee>
+
+<h1>Employees</h1>
+
+<p>
+    <a class="btn btn-success" asp-controller="Employee" asp-action="Add">Add New Employee</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Email</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Model is the keyword which represents
+        the Model passed on top of the file -->
+        @foreach (var employee in Model)
+        {
+            <tr>
+                <td>@employee.FirstName</td>
+                <td>@employee.LastName</td>
+                <td>@employee.Email</td>
+                <td>
+                    <a class="btn btn-primary" asp-controller="employee" asp-action="Edit" asp-route-id="@employee.Id">Edit</a>
+                    <a class="btn btn-danger" asp-controller="employee" asp-action="Delete" asp-route-id="@employee.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<script>
+    @section Scripts {
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).on('click', '.delete-btn', function () {
+            var id = $(this).data('id');
+            if (confirm("Are you sure you want to delete this employee?")) {
+                $.ajax({
+                    url: '@Url.Action("Delete", "Employee")',
+                    type: 'POST',
+                    data: { id: id },
+                    success: function (response) {
+                        if (response.success) {
+                            $("#row-" + id).fadeOut();
+                        } else {
+                            alert(response.message);
+                        }
+                    },
+                    error: function () {
+                        alert("An error occurred while trying to delete the employee.");
+                    }
+                });
+            }
+        });
+    </script>
+}
+</script>
