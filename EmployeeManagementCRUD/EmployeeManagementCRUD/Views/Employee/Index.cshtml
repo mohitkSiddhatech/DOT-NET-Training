@@ -1,0 +1,304 @@
+﻿@{
+	ViewData["Title"] = "Index";
+}
+
+<div class="container">
+	<h2>Employees Record</h2>
+	<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal" onclick="clearTextBox();">
+		Add New Employee
+	</button><br /><br />
+	<table class="table table-bordered table-hover">
+		<thead>
+			<tr>
+				@* <th>ID</th> *@
+				<th>First Name</th>
+				<th>Last Name</th>
+				<th>Email</th>
+				<th>Department</th>
+				<th>Action</th>
+			</tr>
+		</thead>
+		<tbody class="tbody">
+			<!-- Employee records will be populated here -->
+		</tbody>
+	</table>
+</div>
+
+<!-- Add/Update Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="myModalLabelAddEmployee" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="myModalLabelAddEmployee">Add Employee</h5>
+				<h5 class="modal-title d-none" id="myModalLabelUpdateEmployee">Update Employee</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<form id="employeeForm">
+					<input type="hidden" id="Id" name="Id" />
+					<div class="form-group">
+						<label for="FirstName">First Name</label>
+						<input type="text" class="form-control" id="FirstName" placeholder="First Name" name="FirstName" />
+					</div>
+					<div class="form-group">
+						<label for="LastName">Last Name</label>
+						<input type="text" class="form-control" id="LastName" placeholder="Last Name" , name="LastName" />
+					</div>
+					<div class="form-group">
+						<label for="Email">Email</label>
+						<input type="text" class="form-control" id="Email" placeholder="Email" , name="Email" />
+					</div>
+					<div class="form-group">
+						<label for="Department">Department</label>
+						<input type="text" class="form-control" id="Department" placeholder="Department", name="Department" />
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button type="submit" class="btn btn-primary" id="btnAdd" onclick="return Add();">Add Employee</button>
+				<button type="button" class="btn btn-primary d-none" id="btnUpdate" onclick="return Update();">Update</button>
+				<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Delete Modal -->
+<div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Delete Employee</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<p>Are you sure you want to delete the following Employee?</p>
+				<input type="hidden" id="HiddenEmployeeId" />
+				<label id="labelToUpdateName" class="d-block text-center fw-bold"></label>
+				<label id="labelToUpdateDepartment" class="d-block text-center fw-bold"></label>
+				<label id="labelToUpdateEmail" class="d-block text-center fw-bold"></label>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-danger" id="btnDelete" onclick="return Delete();">Delete</button>
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- JQUERY and JQUERY Validation minified and CDN -->
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+
+
+<script>
+	$(document).ready(function () {
+		loadData();
+		// console.log("Validation plugin loaded:", typeof $.fn.validate); 
+		$("#employeeForm").validate({
+			rules: {
+				FirstName: {
+					required: true,
+					minlength: 2
+				},
+				LastName: {
+					required: true,
+					minlength: 2
+				},
+				Email: {
+					required: true,
+					email: true
+				},
+				Department: {
+					required: true,
+					minlength: 2
+				}
+			},
+			messages: {
+				FirstName: {
+					required: "First name is required",
+					minlength: "First name must be at least 2 characters"
+				},
+				LastName: {
+					required: "Last name is required",
+					minlength: "Last name must be at least 2 characters"
+				},
+				Email: {
+					required: "Email is required",
+					email: "Please enter a valid email address"
+				},
+				Department: {
+					required: "Department is required",
+					minlength: "Department must be at least 2 characters"
+				}
+			},
+			errorClass: "is-invalid",
+			validClass: "is-valid",
+			errorElement: "div",
+			highlight: function (element, errorClass, validClass) {
+				$(element).addClass(errorClass).removeClass(validClass);
+			},
+			unhighlight: function (element, errorClass, validClass) {
+				$(element).removeClass(errorClass).addClass(validClass);
+			},
+			errorPlacement: function (error, element) {
+				error.addClass("invalid-feedback");
+				error.insertAfter(element);
+			}
+		});
+	});
+
+	function loadData() {
+		$.ajax({
+			url: '/Employee/GetAll',
+			type: 'GET',
+			success: function (result) {
+				var html = '';
+				$.each(result.data, function (key, item) {
+					html += '<tr>';
+					// html += '<td>' + item.Id + '</td>';
+					html += '<td>' + item.FirstName + '</td>';
+					html += '<td>' + item.LastName + '</td>';
+					html += '<td>' + item.Email + '</td>';
+					html += '<td>' + item.Department + '</td>';
+					html += '<td><a href="#" class="btn btn-primary" onclick="return getbyID(' + item.Id + ')">Edit</a>  <a href="#" class="btn btn-danger" onclick="ConfirmDelete(' + item.Id + ')">Delete</a></td>';
+					html += '</tr>';
+				});
+				$('.tbody').html(html);
+			},
+			error: function (errormessage) {
+				alert(errormessage.responseText);
+			}
+		});
+	}
+
+	function Add() {
+		if (!$("#employeeForm").valid()) {
+			return false;
+		}
+		var employee = {
+			Id: 0,
+			FirstName: $('#FirstName').val(),
+			LastName: $('#LastName').val(),
+			Email: $('#Email').val(),
+			Department: $('#Department').val()
+		};
+		$.ajax({
+			url: '@Url.Action("AddEmployee", "Employee")',
+			type: 'POST',
+			contentType: 'application/json',
+			data: JSON.stringify(employee),
+			success: function () {
+				loadData();
+				const modal = bootstrap.Modal.getInstance(document.getElementById('myModal'));
+				modal.hide();
+			},
+			error: function (errormessage) {
+				alert(errormessage.responseText);
+			}
+		});
+	}
+
+	function getbyID(EmpID) {
+		$.ajax({
+			url: "/Employee/GetById/" + EmpID,
+			type: "GET",
+			contentType: 'application/json',
+			success: function (result) {
+				$('#Id').val(result.data.Id);
+				$('#FirstName').val(result.data.FirstName);
+				$('#LastName').val(result.data.LastName);
+				$('#Email').val(result.data.Email);
+				$('#Department').val(result.data.Department);
+
+				$('#btnUpdate').removeClass('d-none');
+				$('#btnAdd').addClass('d-none');
+				$('#myModalLabelAddEmployee').addClass('d-none');
+				$('#myModalLabelUpdateEmployee').removeClass('d-none');
+
+				var modal = new bootstrap.Modal(document.getElementById('myModal'));
+				modal.show();
+			},
+			error: function (errormessage) {
+				alert(errormessage.responseText);
+			}
+		});
+		return false;
+	}
+
+	function Update() {
+		if (!$("#employeeForm").valid()) {
+			return false;
+		}
+		var employee = {
+			Id: $('#Id').val(),
+			FirstName: $('#FirstName').val(),
+			LastName: $('#LastName').val(),
+			Email: $('#Email').val(),
+			Department: $('#Department').val()
+		};
+		$.ajax({
+			url: '@Url.Action("UpdateEmployee", "Employee")',
+			type: 'POST',
+			contentType: 'application/json',
+			data: JSON.stringify(employee),
+			success: function () {
+				loadData();
+				const modal = bootstrap.Modal.getInstance(document.getElementById('myModal'));
+				modal.hide();
+			},
+			error: function (errormessage) {
+				alert(errormessage.responseText);
+			}
+		});
+	}
+
+	function ConfirmDelete(EmpID) {
+		$.ajax({
+			url: "/Employee/GetById/" + EmpID,
+			type: "GET",
+			contentType: 'application/json',
+			success: function (result) {
+				$("#labelToUpdateName").html("<b>Name: </b>" + result.data.FirstName);
+				$("#labelToUpdateDepartment").html("<b>Department: </b>" + result.data.Department);
+				$("#labelToUpdateEmail").html("<b>Email: </b>" + result.data.Email);
+				$('#HiddenEmployeeId').val(EmpID);
+
+				var modal = new bootstrap.Modal(document.getElementById('deleteConfirmationModal'));
+				modal.show();
+			},
+			error: function (errormessage) {
+				alert(errormessage.responseText);
+			}
+		});
+	}
+
+	function Delete() {
+		var ID = $('#HiddenEmployeeId').val();
+		$.ajax({
+			url: "/Employee/DeleteEmployee/" + ID,
+			type: 'POST',
+			contentType: 'application/json',
+			success: function () {
+				loadData();
+				const modal = bootstrap.Modal.getInstance(document.getElementById('deleteConfirmationModal'));
+				modal.hide();
+			},
+			error: function (errormessage) {
+				alert(errormessage.responseText);
+			}
+		});
+	}
+
+	function clearTextBox() {
+		$('#Id').val("");
+		$('#FirstName').val("");
+		$('#LastName').val("");
+		$('#Email').val("");
+		$('#Department').val("");
+		$('#btnUpdate').addClass('d-none');
+		$('#btnAdd').removeClass('d-none');
+		$('#myModalLabelAddEmployee').removeClass('d-none');
+		$('#myModalLabelUpdateEmployee').addClass('d-none');
+	}
+</script>

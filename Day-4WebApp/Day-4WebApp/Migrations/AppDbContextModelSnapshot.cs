@@ -21,7 +21,7 @@ namespace Day_4WebApp.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Day_4WebApp.Controllers.Employee", b =>
+            modelBuilder.Entity("Day_4WebApp.Models.Employee", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
