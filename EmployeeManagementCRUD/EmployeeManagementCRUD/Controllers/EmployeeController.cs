@@ -1,6 +1,7 @@
 ﻿using EmployeeManagementCRUD.Data;
 using EmployeeManagementCRUD.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
 namespace EmployeeManagementCRUD.Controllers
@@ -57,16 +58,17 @@ namespace EmployeeManagementCRUD.Controllers
         [HttpPost]
         public async Task<IActionResult> UpdateEmployee([FromBody] Employee employee)
         {
-            if (!ModelState.IsValid)
-                return Json(new { success = false });
+            if (ModelState.IsValid)
+            {
+                await _context.Database.ExecuteSqlRawAsync(
+                    "EXEC UpdateEmployee @p0, @p1, @p2, @p3, @p4",
+                    employee.Id, employee.FirstName, employee.LastName, employee.Email, employee.Department);
 
-            await _context.Database.ExecuteSqlRawAsync(
-                "EXEC UpdateEmployee @Id = {0}, @FirstName = {1}, @LastName = {2}, @Email = {3}, @Department = {4}",
-                employee.Id, employee?.FirstName??"", employee?.LastName??"", employee?.Email??"", employee?.Department??""
-            );
-
-            return Json(new { success = true });
+                return Json(new { success = true });
+            }
+            return Json(new { success = false });
         }
+
 
         [HttpPost]
         public async Task<IActionResult> DeleteEmployee(int Id)

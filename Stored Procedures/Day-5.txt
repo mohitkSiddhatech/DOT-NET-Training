@@ -1,0 +1,56 @@
+-- Add Employee
+CREATE PROCEDURE AddEmployee
+    @FirstName NVARCHAR(100),
+    @LastName NVARCHAR(100),
+    @Email NVARCHAR(100),
+    @Department NVARCHAR(100)
+AS
+BEGIN
+    INSERT INTO employees (FirstName, LastName, Email, Department)
+    VALUES (@FirstName, @LastName, @Email, @Department)
+END
+GO
+
+-- Get All Employees
+CREATE PROCEDURE GetAllEmployees
+AS
+BEGIN
+    SELECT Id, FirstName, LastName, Email, Department FROM employees
+END
+GO
+
+-- Get Employee By ID
+CREATE PROCEDURE GetEmployeeById
+    @Id INT
+AS
+BEGIN
+    SELECT Id, FirstName, LastName, Email, Department FROM employees WHERE Id = @Id
+END
+GO
+
+-- Update Employee
+CREATE PROCEDURE UpdateEmployee
+    @Id INT,
+    @FirstName NVARCHAR(100),
+    @LastName NVARCHAR(100),
+    @Email NVARCHAR(100),
+    @Department NVARCHAR(100)
+AS
+BEGIN
+    UPDATE employees
+    SET FirstName = @FirstName,
+        LastName = @LastName,
+        Email = @Email,
+        Department = @Department
+    WHERE Id = @Id
+END
+GO
+
+-- Delete Employee
+CREATE PROCEDURE DeleteEmployee
+    @Id INT
+AS
+BEGIN
+    DELETE FROM employees WHERE Id = @Id
+END
+GO

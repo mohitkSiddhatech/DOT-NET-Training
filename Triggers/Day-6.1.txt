@@ -1,0 +1,27 @@
+CREATE TRIGGER [dbo].[trg_AuditEmployeeUpdates]
+ON [Day-5Employee].[dbo].[employees]
+AFTER UPDATE
+AS
+BEGIN
+	-- The SET NOCOUNT ON directive prevents the server from sending messages to the client after each statement, 
+	-- like '(*n* row(s) affected)', which can unnecessarily consume network bandwidth.
+    SET NOCOUNT ON; --
+
+    INSERT INTO [Day-5Employee].[dbo].[EmployeeAuditLog] (
+        EmployeeId,
+        OldFirstName, NewFirstName,
+        OldLastName, NewLastName,
+        OldEmail, NewEmail,
+        OldDepartment, NewDepartment
+    )
+    SELECT
+        i.Id,
+        d.FirstName, i.FirstName,
+        d.LastName, i.LastName,
+        d.Email, i.Email,
+        d.Department, i.Department
+    FROM
+        INSERTED i
+    INNER JOIN
+        DELETED d ON i.Id = d.Id;
+END;

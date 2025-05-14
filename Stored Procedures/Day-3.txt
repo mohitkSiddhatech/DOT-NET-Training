@@ -1,0 +1,22 @@
+use [Employee Management System]
+
+CREATE TABLE Employee (
+    Id INT PRIMARY KEY IDENTITY(1,1),
+    FirstName NVARCHAR(50) NULL,
+    LastName NVARCHAR(50) NULL,
+    Email NVARCHAR(100) NULL UNIQUE
+);
+
+SELECT * FROM dbo.Employee;
+
+INSERT INTO dbo.Employee (FirstName, LastName, Email)
+VALUES('Mohit', 'Kirange', 'mohitk@gmail.com'),
+('Ankit', 'Prasad', 'ankitpp@gmail.com'),
+('Kalpesh', 'Patil', 'kalpeshsp@gmail.com');
+
+
+CREATE PROCEDURE GetEmployees
+AS
+BEGIN
+	SELECT * FROM dbo.Employee;
+END;

@@ -1,0 +1,80 @@
+-- Creating the stored procedure which has no exception handleing:
+
+CREATE PROCEDURE spDivideTwoNumber(
+@Number1 INT, 
+@Number2 INT
+)
+AS
+BEGIN
+    DECLARE @Result INT
+    SET @Result = 0
+    SET @Result = @Number1 / @Number2
+    PRINT 'RESULT IS :'+CAST(@Result AS VARCHAR)
+END
+
+-- Now Altering the procedure with the help of RAISERROR
+
+USE [Day-6]
+GO
+/****** Object:  StoredProcedure [dbo].[spDivideTwoNumber]    Script Date: 14-05-2025 22:54:33 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER PROCEDURE [dbo].[spDivideTwoNumber](
+@Number1 INT, 
+@Number2 INT
+)
+AS
+BEGIN
+    DECLARE @Result INT
+    SET @Result = 0
+	IF(@Number2 = 0)
+	BEGIN
+         RAISERROR('Second Number Cannot be zero', 16, 1)
+    END
+    ELSE
+    BEGIN
+        SET @Result = @Number1 / @Number2
+        PRINT 'RESULT IS : '+ CAST(@Result AS VARCHAR)
+    END
+END
+
+EXEC [dbo].[spDivideTwoNumber] 100, 0
+
+
+-- Using @@ERROR
+
+USE [Day-6]
+GO
+/****** Object:  StoredProcedure [dbo].[spDivideTwoNumber]    Script Date: 14-05-2025 22:54:33 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER PROCEDURE spDivideTwoNumber
+@Number1 INT, 
+@Number2 INT
+AS
+BEGIN
+  DECLARE @Result INT
+  SET @Result = 0
+  IF(@Number2 = 0)
+  BEGIN
+    RAISERROR('Second Number Cannot be zero',16,1)
+  END
+  ELSE
+  BEGIN
+    SET @Result = @Number1 / @Number2
+  END
+  IF(@@ERROR <> 0)
+  BEGIN
+    PRINT 'Error Occurred'
+  END
+  ELSE
+  BEGIN
+    PRINT 'RESULT IS :'+CAST(@Result AS VARCHAR)
+  END
+END
+
+EXEC [dbo].[spDivideTwoNumber] 100, 0

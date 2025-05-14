@@ -1,0 +1,65 @@
+-- Creating the both tables as brands adn brand approvals.
+CREATE TABLE brands (
+    brand_id INT IDENTITY PRIMARY KEY,
+    brand_name VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE brand_approvals(
+    brand_id INT IDENTITY PRIMARY KEY,
+    brand_name VARCHAR(255) NOT NULL
+);
+
+-- Selecting bothe tables and checking records.
+SELECT * FROM brands;
+SELECT * FROM brand_approvals;
+
+-- Creating View for the tables that has approval_status where the brand is approved or not.
+
+CREATE VIEW vw_brands 
+AS
+SELECT
+    brand_name,
+    'Approved' approval_status
+FROM
+    brands
+UNION
+SELECT
+    brand_name,
+    'Pending Approval' approval_status
+FROM
+    brand_approvals;
+
+
+-- Creating a trigger for view of brands & applying INSEAD OF INSERT trigger where if tried to insert the record into the 
+-- view then if it is new brand then it goes into the brand_approvals table and status for it in view is pending Approval.
+-- It checking that if entering brand is in the brands table or not.
+
+CREATE TRIGGER trg_vw_brands 
+ON vw_brands
+INSTEAD OF INSERT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    INSERT INTO brand_approvals ( 
+        brand_name
+    )
+    SELECT
+        i.brand_name
+    FROM
+        inserted i
+    WHERE
+        i.brand_name NOT IN (
+            SELECT brand_name
+            FROM brands
+        );
+END
+
+--  Inserting a brand name into the view.
+INSERT INTO vw_brands(brand_name)
+VALUES('Eddy Merckx')
+
+-- Selecting the view for checking if it is working perfectly or not.
+SELECT
+	brand_name,
+	approval_status
+FROM vw_brands;
