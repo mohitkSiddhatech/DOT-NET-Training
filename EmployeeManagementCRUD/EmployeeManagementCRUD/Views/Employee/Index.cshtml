@@ -8,7 +8,7 @@
 		Add New Employee
 	</button><br /><br />
 	<table class="table table-bordered table-hover">
-		<thead>
+		<thead class="table-dark text-center">
 			<tr>
 				@* <th>ID</th> *@
 				<th>First Name</th>
@@ -167,7 +167,7 @@
 				$('.tbody').html(html);
 			},
 			error: function (errormessage) {
-				alert(errormessage.responseText);
+				alert("Issue in getting the Employee Info.");
 			}
 		});
 	}

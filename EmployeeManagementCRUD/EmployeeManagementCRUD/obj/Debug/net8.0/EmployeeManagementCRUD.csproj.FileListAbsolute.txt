@@ -172,3 +172,4 @@ C:\Training DOT NET\EmployeeManagementCRUD\EmployeeManagementCRUD\obj\Debug\net8
 C:\Training DOT NET\EmployeeManagementCRUD\EmployeeManagementCRUD\obj\Debug\net8.0\EmployeeManagementCRUD.genruntimeconfig.cache
 C:\Training DOT NET\EmployeeManagementCRUD\EmployeeManagementCRUD\obj\Debug\net8.0\ref\EmployeeManagementCRUD.dll
 C:\Training DOT NET\EmployeeManagementCRUD\EmployeeManagementCRUD\bin\Debug\net8.0\Dapper.dll
+C:\Training DOT NET\EmployeeManagementCRUD\EmployeeManagementCRUD\bin\Debug\net8.0\AutoMapper.dll
