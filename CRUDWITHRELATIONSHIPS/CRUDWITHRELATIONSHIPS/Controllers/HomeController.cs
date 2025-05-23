@@ -1,9 +1,8 @@
 using System.Diagnostics;
-using EmployeeManagementCRUD.Models;
-using Microsoft.AspNetCore.Diagnostics;
+using CRUDWITHRELATIONSHIPS.Models;
 using Microsoft.AspNetCore.Mvc;
 
-namespace EmployeeManagementCRUD.Controllers
+namespace CRUDWITHRELATIONSHIPS.Controllers
 {
     public class HomeController : Controller
     {
@@ -27,13 +26,7 @@ namespace EmployeeManagementCRUD.Controllers
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
-            var exceptionFeature = HttpContext.Features.Get<IExceptionHandlerFeature>();
-            var exception = exceptionFeature?.Error;
-
-            // Log exception here
-            // You can also pass details to the view
-
-            return View("Error");
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }

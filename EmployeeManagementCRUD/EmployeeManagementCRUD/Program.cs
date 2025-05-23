@@ -1,4 +1,5 @@
 using EmployeeManagementCRUD.Data;
+using EmployeeManagementCRUD.Middlewares;
 using EmployeeManagementCRUD.Repository;
 using Microsoft.EntityFrameworkCore;
 
@@ -36,6 +37,20 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
+
+//app.Use(async (context, next) =>
+//{
+//    try
+//    {
+//        await next(context);
+//    }
+//    catch (Exception ex)
+//    {
+//        context.Response.StatusCode = 500;
+//    }
+//});
+
+app.UseMiddleware<GlobalExceptionHandelingMiddleware>();
 
 app.MapControllerRoute(
     name: "default",

@@ -29,7 +29,10 @@ namespace EmployeeManagementCRUD.Controllers
         {
             //var employees = await _context.employees
             //    .FromSqlRaw("EXEC GetAllEmployees")
-            //    .ToListAsync();
+            //    .ToListAsync();\
+            
+            // Added below exception for checking the Global Exception Handler.
+            //throw new Exception("Test exception from GetAll");
             var employees = await _repository.GetAllAsync();
             var employeesDto = _mapper.Map<List<EmployeeDto>>(employees);
 
